@@ -440,6 +440,65 @@ body {
   transform: translateX(-50%) translateY(0);
 }
 
+/* ── WeChat QR Overlay ── */
+.wechat-qr-overlay {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: var(--panel);
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -8px 30px rgba(47,73,55,0.12);
+  border-radius: 18px 18px 0 0;
+  padding: 20px 16px calc(env(safe-area-inset-bottom, 0px) + 16px);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  animation: slideUp .35s ease;
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+.wechat-qr-overlay img {
+  width: 90px;
+  height: 90px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+.wechat-qr-info {
+  flex: 1;
+  min-width: 0;
+}
+.wechat-qr-info .qr-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.wechat-qr-info .qr-hint {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.wechat-qr-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: var(--soft);
+  border-radius: 50%;
+  font-size: 14px;
+  color: var(--muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 @media (max-width: 860px) {
   .charts-grid { grid-template-columns: 1fr; }
 }
@@ -529,8 +588,24 @@ body {
 </div>
 
 <div class="copy-toast" id="copyToast"></div>
+<div class="wechat-qr-overlay" id="wechatQr" style="display:none">
+  <button class="wechat-qr-close" onclick="document.getElementById('wechatQr').style.display='none'">✕</button>
+  <img src="qrcode.png" alt="公众号二维码">
+  <div class="wechat-qr-info">
+    <div class="qr-title">橘话闲谈</div>
+    <div class="qr-hint">长按识别二维码关注公众号</div>
+  </div>
+</div>
 
 <script>
+/* ── 微信环境检测 ── */
+(function(){
+  var ua = navigator.userAgent.toLowerCase();
+  if (/micromessenger/i.test(ua)) {
+    document.getElementById('wechatQr').style.display = 'flex';
+  }
+})();
+
 /* ── 复制文本 ── */
 function copyText(name) {
   if (navigator.clipboard && navigator.clipboard.writeText) {
